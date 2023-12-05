@@ -1,11 +1,6 @@
+/*
 
-// BRING IN GEOJSON ----------------------------------------------------------------
-let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-d3.json(url).then(function (data) {
-  console.log(data.features);
-  createFeatures(data.features);
-});
-
+*/ 
 // CREATE MAP -------------------------------------------------------------------
 function createMap(earthquakes) {
 
@@ -33,7 +28,10 @@ function createMap(earthquakes) {
   let myMap = L.map("map", {
     center: [40, -100],
     zoom: 4.75,
-    layers: [street, earthquakes]
+    layers: [
+      street, 
+      earthquakes
+    ]
   });
 
   // Create a layer control.
@@ -46,52 +44,76 @@ function createMap(earthquakes) {
 }
 
 
-// ADDING IN LAYERS ----------------------------------------------------------------
+
+
+
+// LAYERS ----------------------------------------------------------------
+  // // ----------------INITIATE LAYER GROUPS??????---------------
+  // // INITIALIZE LAYER GROUPS
+  // let layers = {
+  //   -10-10: new L.LayerGroup(),
+  //   10-30: new L.LayerGroup(),
+  //   30-50: new L.LayerGroup(),
+  //   50-70: new L.LayerGroup(),
+  //   70-90: new L.LayerGroup(),
+  //   90+: 
+
+  // },
+
+  // // OVERLAYS  --  Setting up colors for  colors
+  // let overlays = {
+  //   "-10-10": ,
+  //   "10-30": , 
+  //   "30-50": ,
+  //   "50-70": ,
+  //   "70-90": ,
+  //   "90+": ,
+  // }
+
 function createFeatures(earthquakeData) {
 
-
-
-  // onEachFeature  
+  // bindPopup ---------- onEachFeature  
   function onEachFeature(feature, layer) {
     // Set Variables
-    let magnitude = feature.properties.mag;
+    let magnitude = feature.properties.mag; // controls size of marker
     let place = feature.properties.place;
-    let depth = feature.geometry.coordinates[2];
+    let depth = feature.geometry.coordinates[2]; // controls color (higher depth indicates darker color)
     let lat = feature.geometry.coordinates[0];
     let lon = feature.geometry.coordinates[1];
     let marker = L.marker([lat, lon]);
     // Set Pop Up Binding
     layer.bindPopup(`<h3>Place: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
   }
+  // Loop to go through data
+  //function ?(?) {**here**}
 
   // L.circle for markers 
+  function markerSize(mag) {
+    return Math.sqrt(mag) * 50; // Does it need to be 50??
+  }
+
   function createCircleMarker(feature, latlng) {
     let options = {
+      color: "red", // TEMP: eventually needs to reflect depth
+      radius: 2, // TEMP: eventually needs to reflect magnitude      
     }
     return L.circleMarker(latlng, options);
   }
-  // GeoJSON layer - features array -  earthquakeData object 
+  // GeoJSON layer - [features] array -  {earthquakeData} object 
   // onEachFeature - once for each piece of data in the array.
-
+  // 
   let earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature,
     pointToLayer: createCircleMarker
   });
-
   // Send our earthquakes layer to the createMap function/
   createMap(earthquakes);
-
-
-}
-
-// STYLIZE -----------------------------------------------------------------------
-// Color
-function chooseColor(mag) {
-
 }
 
 // LEGEND --------------------------------------------------------------------------
-let legend = L.control({ position: 'bottomright' });
+let legend = L.control({ 
+  position: 'bottomright' 
+});
 
 legend.onAdd = function () {
   // Set up variables
@@ -103,6 +125,19 @@ legend.onAdd = function () {
   // push to labels array as list item
 
 }
+
+// STYLIZE -----------------------------------------------------------------------
+// Color
+function chooseColor(mag) {
+
+}
+
+// BRING IN DATA ----------------------------------------------------------------
+let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+d3.json(url).then(function (data) {
+  console.log(data.features);
+  createFeatures(data.features);
+});
 
 
 
