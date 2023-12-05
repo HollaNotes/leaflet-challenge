@@ -1,6 +1,7 @@
 /*
 
 */ 
+
 // CREATE MAP -------------------------------------------------------------------
 function createMap(earthquakes) {
 
@@ -44,48 +45,60 @@ function createMap(earthquakes) {
 }
 
 
-
+let six = .2
 
 
 // LAYERS ----------------------------------------------------------------
-  // // ----------------INITIATE LAYER GROUPS??????---------------
-  // // INITIALIZE LAYER GROUPS
-  // let layers = {
-  //   -10-10: new L.LayerGroup(),
-  //   10-30: new L.LayerGroup(),
-  //   30-50: new L.LayerGroup(),
-  //   50-70: new L.LayerGroup(),
-  //   70-90: new L.LayerGroup(),
-  //   90+: 
+// ----------------INITIATE LAYER GROUPS??????---------------
+// INITIALIZE LAYER GROUPS
+// let layers = {
+//   -10-10: new L.LayerGroup(),
+//   10-30: new L.LayerGroup(),
+//   30-50: new L.LayerGroup(),
+//   50-70: new L.LayerGroup(),
+//   70-90: new L.LayerGroup(),
+//   90+: 
 
-  // },
+// },
 
-  // // OVERLAYS  --  Setting up colors for  colors
-  // let overlays = {
-  //   "-10-10": ,
-  //   "10-30": , 
-  //   "30-50": ,
-  //   "50-70": ,
-  //   "70-90": ,
-  //   "90+": ,
-  // }
+// // OVERLAYS  --  Setting up colors for  colors
+// let overlays = {
+//   "-10-10": ,
+//   "10-30": , 
+//   "30-50": ,
+//   "50-70": ,
+//   "70-90": ,
+//   "90+": ,
+// }
+
 
 function createFeatures(earthquakeData) {
 
-  // bindPopup ---------- onEachFeature  
+  // Marker and bindPopup ---------- onEachFeature  
   function onEachFeature(feature, layer) {
-    // Set Variables
+    // Set Variables and Arrays    
     let magnitude = feature.properties.mag; // controls size of marker
     let place = feature.properties.place;
     let depth = feature.geometry.coordinates[2]; // controls color (higher depth indicates darker color)
     let lat = feature.geometry.coordinates[0];
     let lon = feature.geometry.coordinates[1];
     let marker = L.marker([lat, lon]);
+    let depth_meters = [];
+    let latlng_coords = [];
+    let mag_size = []
+    // Loop through data to get magnitude, depth, lat, lon
+    for (let i = 0; i < feature.properties.place.length; i++) {
+      
+      console.log("hello");
+
+
+    }
     // Set Pop Up Binding
     layer.bindPopup(`<h3>Place: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
   }
-  // Loop to go through data
-  //function ?(?) {**here**}
+  
+  
+ 
 
   // L.circle for markers 
   function markerSize(mag) {
