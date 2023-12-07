@@ -1,79 +1,45 @@
-/*
 
-*/ 
+// BRING IN DATA ----------------------------------------------------------------
+let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+d3.json(url).then(function (data) {
+  console.log(data.features);
+  createFeatures(data.features);
+});
 
-// CREATE MAP -------------------------------------------------------------------
+
+// CREATE MAP & LAYERS ----------------------------------------------------------------
 function createMap(earthquakes) {
-
   // Create the base layers.
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   })
-
-  let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-  });
-
   // Create a baseMaps object.
   let baseMaps = {
     "Street Map": street,
-    "Topographic Map": topo
   };
-
   // Create an overlay object to hold our overlay.
   let overlayMaps = {
     Earthquakes: earthquakes
   };
-
   // Create our map, giving it the streetmap and earthquakes layers to display on load.
   let myMap = L.map("map", {
     center: [40, -100],
     zoom: 4.75,
     layers: [
-      street, 
+      street,
       earthquakes
     ]
   });
-
   // Create a layer control.
   // Pass it our baseMaps and overlayMaps.
   // Add the layer control to the map.
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
-
 }
 
 
-let six = .2
-
-
-// LAYERS ----------------------------------------------------------------
-// ----------------INITIATE LAYER GROUPS??????---------------
-// INITIALIZE LAYER GROUPS
-// let layers = {
-//   -10-10: new L.LayerGroup(),
-//   10-30: new L.LayerGroup(),
-//   30-50: new L.LayerGroup(),
-//   50-70: new L.LayerGroup(),
-//   70-90: new L.LayerGroup(),
-//   90+: 
-
-// },
-
-// // OVERLAYS  --  Setting up colors for  colors
-// let overlays = {
-//   "-10-10": ,
-//   "10-30": , 
-//   "30-50": ,
-//   "50-70": ,
-//   "70-90": ,
-//   "90+": ,
-// }
-
-
 function createFeatures(earthquakeData) {
-
   // Marker and bindPopup ---------- onEachFeature  
   function onEachFeature(feature, layer) {
     // Set Variables and Arrays    
@@ -88,21 +54,10 @@ function createFeatures(earthquakeData) {
     let mag_size = []
     // Loop through data to get magnitude, depth, lat, lon
     for (let i = 0; i < feature.properties.place.length; i++) {
-      
-      console.log("hello");
-
-
+      return depth;
     }
     // Set Pop Up Binding
-    layer.bindPopup(`<h3>Place: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
-  }
-  
-  
- 
-
-  // L.circle for markers 
-  function markerSize(mag) {
-    return Math.sqrt(mag) * 50; // Does it need to be 50??
+    layer.bindPopup(`<h3>General Location of Earthquake: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
   }
 
   function createCircleMarker(feature, latlng) {
@@ -121,57 +76,24 @@ function createFeatures(earthquakeData) {
   });
   // Send our earthquakes layer to the createMap function/
   createMap(earthquakes);
+
+  // L.circle for markers 
+  function markerSize(mag) {
+    return Math.sqrt(mag) * 50; // Does it need to be 50??
+  }
 }
 
 // LEGEND --------------------------------------------------------------------------
-let legend = L.control({ 
-  position: 'bottomright' 
+let legend = L.control({
+  position: 'bottomright'
 });
-
 legend.onAdd = function () {
   // Set up variables
-
-
+  let div = L.DomUtil.create("div", "info legend"),
+    depth = [-10, 10, 30, 50, 70, 90];
   div.innerHTML = legendInfo
-
   // go through each magnitude item to label and color the legend
   // push to labels array as list item
-
 }
 
-// STYLIZE -----------------------------------------------------------------------
-// Color
-function chooseColor(mag) {
-
-}
-
-// BRING IN DATA ----------------------------------------------------------------
-let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-d3.json(url).then(function (data) {
-  console.log(data.features);
-  createFeatures(data.features);
-});
-
-
-
-// HANDLER EVENTS ??
-
-// ================================================================================
-// MISC
-//
-//
-
-
-
-//  ----------------------------- LEGEND STUFF?? -------------------------------
-// Update the legend's innerHTML with the last updated time and station count.
-// function updateLegend(time, stationCount) {
-//     document.querySelector(".legend").innerHTML = [
-//       "<p>Updated: " + moment.unix(time).format("h:mm:ss A") + "</p>",
-//       "<p class='out-of-order'>Out of Order Stations: " + stationCount.OUT_OF_ORDER + "</p>",
-//       "<p class='coming-soon'>Stations Coming Soon: " + stationCount.COMING_SOON + "</p>",
-//       "<p class='empty'>Empty Stations: " + stationCount.EMPTY + "</p>",
-//       "<p class='low'>Low Stations: " + stationCount.LOW + "</p>",
-//       "<p class='healthy'>Healthy Stations: " + stationCount.NORMAL + "</p>"
-//     ].join("");
 
