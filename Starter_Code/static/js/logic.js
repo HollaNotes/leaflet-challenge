@@ -1,4 +1,4 @@
-
+// TO DO: GO TO: LINE 41 TO FIX LEGEND
 // BRING IN DATA ----------------------------------------------------------------
 let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 d3.json(url).then(function (data) {
@@ -13,6 +13,7 @@ function createMap(earthquakes) {
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   })
+
   // Create a baseMaps object.
   let baseMaps = {
     "Street Map": street,
@@ -36,6 +37,42 @@ function createMap(earthquakes) {
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
+
+  // Add legend LINES 42-76: Need to fix and make the legend work correctly. Make adjustments
+  let legend = L.control({
+    position: 'bottomright'
+  });
+
+  legend.onAdd = function (map) {
+    let div = L.DomUtil.create("div", "info legend"),
+      depths = [-10, 10, 30, 50, 70, 90],
+      labels = [];
+
+    // Loop through depth ranges and create labels
+    for (let i = 0; i < depths.length; i++) {
+      let depth = depths[i];
+      let nextDepth = depths[i + 1];
+
+      // Create labels for legend
+      div.innerHTML +=
+        '<i style="background:' + getColor(depth + 1) + '"></i> ' +
+        depth + (nextDepth ? '&ndash;' + nextDepth + '<br>' : '+');
+    }
+    return div;
+  };
+
+  // Setting color to match size of depth
+  function getColor(depth) {
+    return depth > 90 ? '#f44336' :
+      depth > 70 ? '#F48236' :
+        depth > 50 ? '#F4BD36' :
+          depth > 30 ? '#F4E736' :
+            depth > 10 ? '#E0F436' :
+              '#ADF436';
+  }
+
+  legend.addTo(myMap); // Add legend to the map
+
 }
 
 
@@ -52,10 +89,12 @@ function createFeatures(earthquakeData) {
     let depth_meters = [];
     let latlng_coords = [];
     let mag_size = []
-    // Loop through data to get magnitude, depth, lat, lon
+    //Loop through data to get magnitude, depth, lat, lon
     for (let i = 0; i < feature.properties.place.length; i++) {
-      return depth;
+      console.log("hi");
     }
+
+    
     // Set Pop Up Binding
     layer.bindPopup(`<h3>General Location of Earthquake: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
   }
@@ -81,19 +120,6 @@ function createFeatures(earthquakeData) {
   function markerSize(mag) {
     return Math.sqrt(mag) * 50; // Does it need to be 50??
   }
-}
-
-// LEGEND --------------------------------------------------------------------------
-let legend = L.control({
-  position: 'bottomright'
-});
-legend.onAdd = function () {
-  // Set up variables
-  let div = L.DomUtil.create("div", "info legend"),
-    depth = [-10, 10, 30, 50, 70, 90];
-  div.innerHTML = legendInfo
-  // go through each magnitude item to label and color the legend
-  // push to labels array as list item
 }
 
 
