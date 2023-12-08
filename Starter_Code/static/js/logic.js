@@ -6,6 +6,20 @@ d3.json(url).then(function (data) {
   createFeatures(data.features);
 });
 
+function markerSize(magnitude) {
+  return Math.sqrt(magnitude) * 10; // Does it need to be 50??
+}
+
+// Function to determine marker color by depth
+function chooseColor(depth) {
+  if (depth < 10) return "#ADF436";
+  else if (depth < 30) return "#E0F436";
+  else if (depth < 50) return "#F4E736";
+  else if (depth < 70) return "#F4BD36";
+  else if (depth < 90) return "#F48236";
+  else return "#f44336";
+}
+
 
 // CREATE MAP & LAYERS ----------------------------------------------------------------
 function createMap(earthquakes) {
@@ -26,10 +40,7 @@ function createMap(earthquakes) {
   let myMap = L.map("map", {
     center: [40, -100],
     zoom: 4.75,
-    layers: [
-      street,
-      earthquakes
-    ]
+    layers: [street, earthquakes]
   });
   // Create a layer control.
   // Pass it our baseMaps and overlayMaps.
@@ -55,21 +66,12 @@ function createMap(earthquakes) {
 
       // Create labels for legend
       div.innerHTML +=
-        '<i style="background:' + getColor(depth + 1) + '"></i> ' +
+        '<i style="background:' + chooseColor(depth + 1) + '"></i> ' +
         depth + (nextDepth ? '&ndash;' + nextDepth + '<br>' : '+');
     }
     return div;
   };
 
-  // Setting color to match size of depth
-  function getColor(depth) {
-    return depth > 90 ? '#f44336' :
-      depth > 70 ? '#F48236' :
-        depth > 50 ? '#F4BD36' :
-          depth > 30 ? '#F4E736' :
-            depth > 10 ? '#E0F436' :
-              '#ADF436';
-  }
 
   legend.addTo(myMap); // Add legend to the map
 
@@ -77,6 +79,7 @@ function createMap(earthquakes) {
 
 
 function createFeatures(earthquakeData) {
+  
   // Marker and bindPopup ---------- onEachFeature  
   function onEachFeature(feature, layer) {
     // Set Variables and Arrays    
@@ -90,7 +93,7 @@ function createFeatures(earthquakeData) {
     let latlng_coords = [];
     let mag_size = []
     //Loop through data to get magnitude, depth, lat, lon
-    for (let i = 0; i < feature.properties.place.length; i++) {
+    for (let i = 0; i < feature.length; i++) {
       console.log("hi");
     }
 
@@ -101,13 +104,17 @@ function createFeatures(earthquakeData) {
 
   function createCircleMarker(feature, latlng) {
     let options = {
-      color: "red", // TEMP: eventually needs to reflect depth
-      radius: 2, // TEMP: eventually needs to reflect magnitude      
+      radius: markerSize(feature.properties.mag),
+      fillColor: chooseColor(feature.geometry.coordinates[2]),
+      fillOpacity: 0.5,
+      color: "black",
+      stroke: true,
+      weight: 1
     }
     return L.circleMarker(latlng, options);
   }
   // GeoJSON layer - [features] array -  {earthquakeData} object 
-  // onEachFeature - once for each piece of data in the array.
+  // onEachFeature -s once for each piece of data in the array.
   // 
   let earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature,
@@ -117,9 +124,7 @@ function createFeatures(earthquakeData) {
   createMap(earthquakes);
 
   // L.circle for markers 
-  function markerSize(mag) {
-    return Math.sqrt(mag) * 50; // Does it need to be 50??
-  }
+
 }
 
 
