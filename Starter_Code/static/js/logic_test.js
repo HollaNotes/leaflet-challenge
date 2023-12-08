@@ -10,6 +10,13 @@ d3.json(url).then(function (data) {
 
 });
 
+// Create function for marker size
+function markerSize(magnitude) {
+  return Math.sqrt(magnitude) * 10; 
+}
+
+
+
 function createFeatures(earthquakeData) {
 
   // Define a function that we want to run once for each feature in the features array.
@@ -19,25 +26,21 @@ function createFeatures(earthquakeData) {
     let magnitude = feature.properties.mag; // controls size of marker
     let place = feature.properties.place;
     let depth = feature.geometry.coordinates[2]; // controls color (higher depth indicates darker color)
-    let lat = feature.geometry.coordinates[0];
-    let lon = feature.geometry.coordinates[1];
-    let marker = L.marker([lat, lon]);
-    let depth_meters = [];
-    let latlng_coords = [];
-    let mag_size = []
-    //Loop through data to get magnitude, depth, lat, lon
-    for (let i = 0; i < feature.properties.place.length; i++) {
-      console.log("hi");
-    
+   
 
-  layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
-    }  
+// Set Pop Up Binding
+  layer.bindPopup(`<h3>General Location of Earthquake: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3>`);
+  }
 
 
   function createCircleMarker(feature, latlng) {
     let options = {
-      color: "red", // TEMP: eventually needs to reflect depth
-      radius: 2, // TEMP: eventually needs to reflect magnitude      
+      radius: markerSize(feature.properties.mag),
+      fillColor: chooseColor(feature.geometry.coordinates[2]),
+      fillOpacity: 0.5,
+      color: "black",
+      stroke: true,
+      weight: 1
     }
     return L.circleMarker(latlng, options);
   }
@@ -52,8 +55,8 @@ function createFeatures(earthquakeData) {
 
   // Send our earthquakes layer to the createMap function/
   createMap(earthquakes);
-  }
 }
+
 
 function createMap(earthquakes) {
 

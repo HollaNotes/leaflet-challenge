@@ -12,12 +12,24 @@ function markerSize(magnitude) {
 
 // Create function to determine marker color by depth
 function chooseColor(depth) {
-  if (depth < 10) return "#ADF436";
-  else if (depth < 30) return "#E0F436";
-  else if (depth < 50) return "#F4E736";
-  else if (depth < 70) return "#F4BD36";
-  else if (depth < 90) return "#F48236";
-  else return "#f44336";
+  if (depth < 10) {
+    return "#ADF436";
+  }
+  else if (depth < 30) {
+    return "#E0F436";
+  }
+  else if (depth < 50) {
+    return "#F4E736";
+  }
+  else if (depth < 70) {
+    return "#F4BD36";
+  }
+  else if (depth < 90) {
+    return "#F48236";
+  }
+  else {
+    return "#f44336";
+  }
 }
 
 
@@ -50,15 +62,20 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
 
-  // Add legend LINES 42-76: Need to fix and make the legend work correctly. Make adjustments
-  let legend = L.control({
-    position: 'bottomright'
-  });
+  
+  // Add legend
+  /*- https://gis.stackexchange.com/questions/193161/add-legend-to-leaflet-map
+    - The solution for creating legends with colored boxes in Leaflet 
+    was based on guidance provided by an AI language model from OpenAI, 
+    which suggested customizing HTML elements within the legend control in 
+    Leaflet using inline styles.*/
+
+  let legend = L.control({ position: 'bottomright' });
 
   legend.onAdd = function (map) {
-    let div = L.DomUtil.create("div", "info legend"),
-      depths = [-10, 10, 30, 50, 70, 90],
-      labels = [];
+    let div = L.DomUtil.create('div', 'info legend');
+    let depths = [-10, 10, 30, 50, 70, 90];
+    let labels = [];
 
     // Loop through depth ranges and create labels
     for (let i = 0; i < depths.length; i++) {
@@ -70,8 +87,33 @@ function createMap(earthquakes) {
         '<i style="background:' + chooseColor(depth + 1) + '"></i> ' +
         depth + (nextDepth ? '&ndash;' + nextDepth + '<br>' : '+');
     }
+    
+    // Add style for legend
+    div.style.backgroundColor = 'white'; // Set background color
+    div.style.padding = '10px'; // Add padding
+    div.style.border = '2px solid #ccc'; // Add border
+    // Add more styles as needed
+
+        // Style for the colored boxes
+    div.querySelectorAll('i').forEach((box) => {
+      box.style.width = '20px'; // Set width
+      box.style.height = '20px'; // Set height
+      box.style.display = 'inline-block'; // Display as inline block
+      box.style.marginRight = '5px'; // Add some margin between box and text
+      // Additional styles for the colored boxes
+    });
+
+    // Style for the labels
+    div.querySelectorAll('span').forEach((label) => {
+      label.style.verticalAlign = 'middle'; // Align labels vertically
+      // Additional styles for the labels
+    });
+
+
     return div;
   };
+
+  legend.addTo(myMap); // Add legend to the map
 
 
   legend.addTo(myMap); // Add legend to the map
