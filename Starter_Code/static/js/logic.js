@@ -1,16 +1,16 @@
-// TO DO: GO TO: LINE 41 TO FIX LEGEND
-// BRING IN DATA ----------------------------------------------------------------
+// Bring in data
 let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 d3.json(url).then(function (data) {
   console.log(data.features);
   createFeatures(data.features);
 });
 
+// Create function for marker size
 function markerSize(magnitude) {
-  return Math.sqrt(magnitude) * 10; // Does it need to be 50??
+  return Math.sqrt(magnitude) * 10; 
 }
 
-// Function to determine marker color by depth
+// Create function to determine marker color by depth
 function chooseColor(depth) {
   if (depth < 10) return "#ADF436";
   else if (depth < 30) return "#E0F436";
@@ -21,30 +21,31 @@ function chooseColor(depth) {
 }
 
 
-// CREATE MAP & LAYERS ----------------------------------------------------------------
-function createMap(earthquakes) {
-  // Create the base layers.
+// Create map and layers
+function createMap(earthquakes) {  
+  // Create the base layer
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   })
 
-  // Create a baseMaps object.
+  // Create a baseMaps object
   let baseMaps = {
     "Street Map": street,
   };
-  // Create an overlay object to hold our overlay.
+
+  // Create an overlay object 
   let overlayMaps = {
     Earthquakes: earthquakes
   };
-  // Create our map, giving it the streetmap and earthquakes layers to display on load.
+
+  // Create map, giving it the streetmap and earthquakes layers to display on load.
   let myMap = L.map("map", {
     center: [40, -100],
     zoom: 4.75,
     layers: [street, earthquakes]
   });
+  
   // Create a layer control.
-  // Pass it our baseMaps and overlayMaps.
-  // Add the layer control to the map.
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
@@ -77,32 +78,21 @@ function createMap(earthquakes) {
 
 }
 
-
-function createFeatures(earthquakeData) {
-  
-  // Marker and bindPopup ---------- onEachFeature  
+// Create features function
+function createFeatures(earthquakeData) {  
+  // Marker and bindPopup onEachFeature  
   function onEachFeature(feature, layer) {
     // Set Variables and Arrays    
     let magnitude = feature.properties.mag; // controls size of marker
     let place = feature.properties.place;
     let depth = feature.geometry.coordinates[2]; // controls color (higher depth indicates darker color)
-    let lat = feature.geometry.coordinates[0];
-    let lon = feature.geometry.coordinates[1];
-    let marker = L.marker([lat, lon]);
-    let depth_meters = [];
-    let latlng_coords = [];
-    let mag_size = []
-    //Loop through data to get magnitude, depth, lat, lon
-    for (let i = 0; i < feature.length; i++) {
-      console.log("hi");
-    }
 
-    
     // Set Pop Up Binding
-    layer.bindPopup(`<h3>General Location of Earthquake: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
+    layer.bindPopup(`<h3>General Location of Earthquake: ${place} </br> Depth: ${depth} </br> Magnitude: ${magnitude}</h3>`);
   }
 
-  function createCircleMarker(feature, latlng) {
+  // Create style for markers
+    function createCircleMarker(feature, latlng) {
     let options = {
       radius: markerSize(feature.properties.mag),
       fillColor: chooseColor(feature.geometry.coordinates[2]),
@@ -113,18 +103,14 @@ function createFeatures(earthquakeData) {
     }
     return L.circleMarker(latlng, options);
   }
-  // GeoJSON layer - [features] array -  {earthquakeData} object 
+  // GeoJSON layer - {earthquakeData} object 
   // onEachFeature -s once for each piece of data in the array.
-  // 
   let earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature,
     pointToLayer: createCircleMarker
   });
-  // Send our earthquakes layer to the createMap function/
+  // Send earthquakes layer to the createMap function
   createMap(earthquakes);
-
-  // L.circle for markers 
-
 }
 
 
