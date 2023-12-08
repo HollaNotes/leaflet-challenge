@@ -7,7 +7,7 @@ d3.json(url).then(function (data) {
 
 // Create function for marker size
 function markerSize(magnitude) {
-  return Math.sqrt(magnitude) * 10; 
+  return Math.sqrt(magnitude) * 10;
 }
 
 // Create function to determine marker color by depth
@@ -34,7 +34,7 @@ function chooseColor(depth) {
 
 
 // Create map and layers
-function createMap(earthquakes) {  
+function createMap(earthquakes) {
   // Create the base layer
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -56,13 +56,13 @@ function createMap(earthquakes) {
     zoom: 4.75,
     layers: [street, earthquakes]
   });
-  
+
   // Create a layer control.
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
 
-  
+
   // Add legend
   /*- https://gis.stackexchange.com/questions/193161/add-legend-to-leaflet-map
     - The solution for creating legends with colored boxes in Leaflet 
@@ -84,17 +84,17 @@ function createMap(earthquakes) {
 
       // Create labels for legend
       div.innerHTML +=
-        '<i style="background:' + chooseColor(depth + 1) + '"></i> ' +
-        depth + (nextDepth ? '&ndash;' + nextDepth + '<br>' : '+');
+        '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
     }
-    
+
     // Add style for legend
     div.style.backgroundColor = 'white'; // Set background color
     div.style.padding = '10px'; // Add padding
     div.style.border = '2px solid #ccc'; // Add border
     // Add more styles as needed
 
-        // Style for the colored boxes
+    // Style for the colored boxes
     div.querySelectorAll('i').forEach((box) => {
       box.style.width = '20px'; // Set width
       box.style.height = '20px'; // Set height
@@ -119,7 +119,7 @@ function createMap(earthquakes) {
 }
 
 // Create features function
-function createFeatures(earthquakeData) {  
+function createFeatures(earthquakeData) {
   // Marker and bindPopup onEachFeature  
   function onEachFeature(feature, layer) {
     // Set Variables and Arrays    
@@ -132,7 +132,7 @@ function createFeatures(earthquakeData) {
   }
 
   // Create style for markers
-    function createCircleMarker(feature, latlng) {
+  function createCircleMarker(feature, latlng) {
     let options = {
       radius: markerSize(feature.properties.mag),
       fillColor: chooseColor(feature.geometry.coordinates[2]),
