@@ -70,6 +70,7 @@ function createMap(earthquakes) {
     which suggested customizing HTML elements within the legend control in 
     Leaflet using inline styles.*/
 
+  // Add legend
   let legend = L.control({ position: 'bottomright' });
 
   legend.onAdd = function (map) {
@@ -84,8 +85,8 @@ function createMap(earthquakes) {
 
       // Create labels for legend
       div.innerHTML +=
-        '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        '<i style="background:' + chooseColor(depths[i] + 1) + '"></i> ' +
+        depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
     }
 
     // Add style for legend
@@ -108,7 +109,6 @@ function createMap(earthquakes) {
       label.style.verticalAlign = 'middle'; // Align labels vertically
       // Additional styles for the labels
     });
-
 
     return div;
   };
